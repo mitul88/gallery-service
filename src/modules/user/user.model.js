@@ -25,6 +25,10 @@ const userSchema = Schema({
         type: String,
         enum: ['user', 'admin'],
         default: "user"
+    },
+    status: {
+        type: Boolean,
+        default: true
     }
 }, { timestamps: true });
 
