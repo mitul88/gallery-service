@@ -27,8 +27,9 @@ const userSchema = Schema({
         default: "user"
     },
     status: {
-        type: Boolean,
-        default: true
+        type: String,
+        enum: ['active', 'deactive', 'suspended'],
+        default: "active"
     }
 }, { timestamps: true });
 

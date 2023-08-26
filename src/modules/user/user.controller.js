@@ -1,22 +1,87 @@
+const _ = require('lodash')
+const jwt_decode = require('jwt-decode')
 const { User } = require("./user.model")
 
-module.exports.createUser = async (req, res) => {  
-
-}
-
 module.exports.getUser = async (req, res) => {
-   
+    try {
+        let header = req.headers.authorization
+        let token = header.split(" ")
+
+        let decoded = await jwt_decode(token[1]);
+        let id = decoded._id
+
+        let user = await User.findOne({_id: id})
+        if (user) {
+            return res.status(200).send({
+                status: true,
+                message: "User profile",
+                data: _.pick(user, ["name", "email", "phone"])
+            })
+        } else {
+            return res.status(200).send({
+                status: false,
+                message: "user not found",
+            })
+        }
+    } catch (err) {
+        console.log(err.message)
+    }
 }
 
 module.exports.updateUser = async (req, res) => {
-   
+    try {
+        let header = req.headers.authorization
+        let token = header.split(" ")
+        let decoded = await jwt_decode(token[1]);
+        let id = decoded._id
+        const {name, email, phone} = req.body
+
+        let user = await User.findById( id );
+
+        if (user) {
+            user.name = name
+            user.email = email
+            user.phone = phone
+            await user.save()
+        }
+
+        return res.status(200).send({
+            status: true,
+            message: "User updated successfully !",
+        })
+
+    } catch(err) {
+        console.log(err.message)
+        return res.status(200).send({
+            status: true,
+            message: err.message,
+        })
+    }
 }
 
-module.exports.deleteUser = async (req, res) => {
-   
+module.exports.deactivate = async (req, res) => {
+    let header = req.headers.authorization
+    let token = header.split(" ")
+    let decoded = await jwt_decode(token[1]);
+    let id = decoded._id
+
+    let user = await User.findById( id );
+
+    if (user & user.status != 'suspended') {
+        user.status = 'deactivate'
+        user.save()
+        return res.status(200).send({
+            status: true,
+            message: "Your account has been deactivated"
+        })
+    } else {
+        return res.status(400).send({
+            status: false,
+            message: "User not found"
+        })
+    }
 }
 
-// Change user password
 module.exports.changePassword = async (req, res) => {
     const header = req.headers.authorization
     if (!header) return res.status(400).send({status: false, message: "Token not provided"})

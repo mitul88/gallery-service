@@ -1,16 +1,19 @@
 const router = require('express').Router();
-const {getUser, createUser, updateUser, deleteUser} = require('./user.controller')
+const {getUser, updateUser, deactivate, changePassword} = require('./user.controller')
 
-router.route('/create')
-    .post(createUser);
 
 router.route('/details')
     .get(getUser);
 
+router.route('/change-password')
+    .get(changePassword);
+
+router.route('/deactivate')
+    .get(deactivate);
+
 router.route('/update')
     .put(updateUser);
 
-router.route('/delete')
-    .delete(deleteUser);
+
 
 module.exports = router;
