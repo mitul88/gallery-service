@@ -16,11 +16,10 @@ module.exports.createImage = async (req, res) => {
     try {
         const image = new Image({title, desc, category, uploaded_by})
         if(req.file) {
-            console.log(req.file)
             const file = dataUri(req).content;
             const result = await uploader.upload(file);
-            console.log(result)
             image.url = result.url;
+            image.asset_details = result
         }
         await image.save()
         return res.status(200).send({
