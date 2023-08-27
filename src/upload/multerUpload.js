@@ -1,6 +1,15 @@
 const multer = require('multer');
+const Datauri = require('datauri')
+const path = require('path')
 
-module.exports.imageStorage = multer.memoryStorage();
+// using memortyStorage, since assets will not be stored in server store
+// image(photograph) upload settings
+const imageStorage = multer.memoryStorage();
+const singleImageUpload = multer({ imageStorage }).single('image');
 
-// const multerUploads = multer({ imageStorage }).single(‘image’);
-// export { multerUploads };
+
+// req contains field object. This func converts the buffer to data url
+const dUri = new Datauri();
+const dataUri = req => dUri.format(path.extname(req.file.originalname).toString(), req.file.buffer) 
+
+export { singleImageUpload, dataUri };

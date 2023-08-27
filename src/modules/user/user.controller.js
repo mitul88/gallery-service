@@ -109,3 +109,27 @@ module.exports.changePassword = async (req, res) => {
                     })
                 }
 }
+
+module.exports.delete = async (req, res) => {
+    let header = req.headers.authorization
+    let token = header.split(" ")
+    let decoded = await jwt_decode(token[1]);
+    let id = decoded._id
+
+    let user = await User.findById( id );
+
+    if (user) {
+
+        // work to be done. need to delete all associated entry with this one
+        
+        return res.status(200).send({
+            status: true,
+            message: "Your account has been deleted"
+        })
+    } else {
+        return res.status(400).send({
+            status: false,
+            message: "User not found"
+        })
+    }
+}
