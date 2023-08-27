@@ -39,11 +39,37 @@ module.exports.createImage = async (req, res) => {
 }
 
 module.exports.viewImage = async (req, res) => {
-    
+    const id = req.params.id
+    try{
+        const image = await Image.findById(id)
+        return res.status(200).send({
+            status: true,
+            message: "Image fetched",
+            data: image
+        })
+    }catch(err) {
+        console.log(err)
+        return res.status(500).send({
+            status: false,
+            message: "Internal server error"
+        })
+    }
 }
 
-module.exports.editImage = async (req, res) => {
-    
+module.exports.imageList = async (req, res) => {
+    try {
+        const images = await Image.find()
+        return res.status(200).send({
+            status: true,
+            message: "images fetched",
+            data: images
+        })
+    }catch(err) {
+        return res.status(500).send({
+            status: false,
+            message: "Internal server error"
+        })
+    }
 }
 
 module.exports.deleteImage = async (req, res) => {
