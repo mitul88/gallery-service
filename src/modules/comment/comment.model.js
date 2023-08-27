@@ -10,7 +10,7 @@ module.exports.Comment = model('Comment', Schema({
         type: String,
         required: true
     },
-    user: {user},
+    user: user,
     image_id: {
         type: Schema.Types.ObjectId,
         ref: 'Image',

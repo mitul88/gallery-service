@@ -1,4 +1,5 @@
 const {Comment} = require('./comment.model')
+const jwt_decode = require('jwt-decode')
 
 module.exports.comment = async(req, res) => {
     const header = req.headers.authorization
@@ -8,15 +9,20 @@ module.exports.comment = async(req, res) => {
     const user_id = decoded._id
     const user_name = decoded.name
     const {user_comment, image_id} = req.body
+    console.log(user_id)
+    console.log(user_name)
     try{
         const comment = new Comment({user_comment, image_id})
-        comment.user.id = user_id
-        comment.user.name = user_name
+        comment.user = {id:user_id, name:user_name}
         await comment.save()
-    }catch(err) {
-        return res.status(200).send({
+        return res.status(201).send({
             status: true,
             message: "comment posted"
+        })
+    }catch(err) {
+        return res.status(500).send({
+            status: false,
+            message: err.message
         })
     }
 }

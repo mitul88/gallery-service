@@ -9,5 +9,5 @@ module.exports = (app) => {
     app.use('/api/user', userRouter)
     app.use('/api/image', imageRouter)
     app.use('/api/category', categoryRouter)
-    app.use('/api/comments', commentRouter)
+    app.use('/api/comment', commentRouter)
 }
