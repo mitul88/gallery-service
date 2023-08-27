@@ -1,7 +1,7 @@
-import { config, uploader } from 'cloudinary';
-import { ENV_CONFIG } from './env.config';
+const { config } = require('cloudinary');
+const { ENV_CONFIG } = require('./env.config');
 
-const cloudinaryConfig = (req, res, next) => {
+module.exports.cloudinaryConfig = (req, res, next) => {
     config({
         cloud_name: ENV_CONFIG.cloudinary_cloudname,
         api_key: ENV_CONFIG.cloudinary_api_key,
@@ -10,4 +10,4 @@ const cloudinaryConfig = (req, res, next) => {
     next();
 }
 
-export { cloudinaryConfig, uploader };
+module.exports.uploader
