@@ -10,10 +10,10 @@ router.route('/')
 router.route('/upload')
     .post([ContentTypeMiddleware.formData, singleImageUpload], createImage);
 
-router.route('/view-image')
+router.route('/view-image/:id')
     .get(viewImage);
 
-router.route('/delete-image')
+router.route('/delete-image/:id')
     .delete(deleteImage);
 
 

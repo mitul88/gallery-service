@@ -6,12 +6,12 @@ const user = Schema({
 },{ _id : false })
 
 module.exports.Comment = model('Comment', Schema({
-    comment: {
+    user_comment: {
         type: String,
         required: true
     },
     user: {user},
-    image: {
+    image_id: {
         type: Schema.Types.ObjectId,
         ref: 'Image',
         required: true

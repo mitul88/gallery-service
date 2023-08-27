@@ -77,17 +77,17 @@ module.exports.deleteImage = async (req, res) => {
 
     try {
         const image = await Image.findById(id)
-        await uploader.destroy(image.asset_details.public_id)
+        await uploader.destroy(image.asset_details.public_id, {invalidate: true})
         await Image.deleteOne({_id: id})
         return res.status(200).send({
             status: true,
             message: "Image deleted"
         })
     }catch(err) {
+        console.log(err)
         return res.status(500).send({
             status: false,
             message: "Internal server error",
-            error: err
         })
     }
 }
