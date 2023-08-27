@@ -2,7 +2,7 @@ const _ = require('lodash')
 const jwt_decode = require('jwt-decode')
 const { User } = require("../user/user.model")
 const {Image} = require('./image.model')
-const { uploader } = require('cloudinary')
+const { uploader } = require('cloudinary').v2
 const { dataUri } = require('../../upload/multerUpload')
 
 module.exports.createImage = async (req, res) => {
@@ -16,8 +16,10 @@ module.exports.createImage = async (req, res) => {
     try {
         const image = new Image({title, desc, category, uploaded_by})
         if(req.file) {
+            console.log(req.file)
             const file = dataUri(req).content;
-            const result = uploader.upload(file);
+            const result = await uploader.upload(file);
+            console.log(result)
             image.url = result.url;
         }
         await image.save()
@@ -27,7 +29,7 @@ module.exports.createImage = async (req, res) => {
             data: _.pick(image, ["title", "category", "url", "created_at"])
         })
     } catch (err) {
-        console.log(err.message)
+        console.log(err)
         return res.status(500).send({
             status: false,
             message: "Internal server error"

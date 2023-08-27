@@ -1,4 +1,4 @@
-const { config } = require('cloudinary');
+const { config } = require('cloudinary').v2;
 const { ENV_CONFIG } = require('./env.config');
 
 module.exports.cloudinaryConfig = (req, res, next) => {

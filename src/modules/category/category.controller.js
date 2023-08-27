@@ -20,11 +20,12 @@ module.exports.createCategory = async (req, res) => {
 }
 
 module.exports.getCategories = async (req, res) => {
-    const category = await Category.find()
+    const categories = await Category.find()
         .sort({name: 1})
 
     return res.status(200).send({
         status: true,
-        message: "categories fetched"        
+        message: "categories fetched",
+        categories        
     })
 }

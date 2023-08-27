@@ -4,8 +4,8 @@ const { singleImageUpload } = require('../../upload/multerUpload');
 const {createImage, viewImage, editImage, deleteImage} = require('./image.controller')
 
 
-router.route('/upload',[ContentTypeMiddleware.formData, singleImageUpload])
-    .post(createImage);
+router.route('/upload')
+    .post([ContentTypeMiddleware.formData, singleImageUpload], createImage);
 
 router.route('/view-image')
     .get(viewImage);
