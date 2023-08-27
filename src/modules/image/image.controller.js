@@ -73,5 +73,21 @@ module.exports.imageList = async (req, res) => {
 }
 
 module.exports.deleteImage = async (req, res) => {
-    
+    const id = req.params.id
+
+    try {
+        const image = await Image.findById(id)
+        await uploader.destroy(image.asset_details.public_id)
+        await Image.deleteOne({_id: id})
+        return res.status(200).send({
+            status: true,
+            message: "Image deleted"
+        })
+    }catch(err) {
+        return res.status(500).send({
+            status: false,
+            message: "Internal server error",
+            error: err
+        })
+    }
 }
