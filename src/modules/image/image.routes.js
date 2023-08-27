@@ -1,8 +1,10 @@
 const router = require('express').Router();
+const { ContentTypeMiddleware } = require('../../middleware/contentType.middleware');
 const { singleImageUpload } = require('../../upload/multerUpload');
 const {createImage, viewImage, editImage, deleteImage} = require('./image.controller')
 
-router.route('/upload',[singleImageUpload])
+
+router.route('/upload',[ContentTypeMiddleware.formData, singleImageUpload])
     .post(createImage);
 
 router.route('/view-image')
