@@ -11,7 +11,9 @@ module.exports.like = async (req, res) => {
     const user_id = decoded._id
     const user_name = decoded.name
 
-    const image_id = req.query.like
+    const image_id = req.query.image
+    if (!image_id) return res.status(400).send({status: false, message: '"image" is missing in search parameter'})
+    
     const likeDetails = {}
 
     try {
@@ -40,7 +42,8 @@ module.exports.removeLike = async (req, res) => {
     const decoded = await jwt_decode(token[1]);
     const user_id = decoded._id
  
-    const image_id = req.query.like
+    const image_id = req.query.image
+    if (!image_id) return res.status(400).send({status: false, message: '"image" is missing in search parameter'})
 
     try {
         await Like.findOneAndDelete({userId: user_id, imageId: image_id})
