@@ -13,7 +13,7 @@ module.exports.like = async (req, res) => {
 
     const image_id = req.query.like
     const likeDetails = {}
-    
+
     try {
         const image = await Image.findById(image_id)
         likeDetails.likedBy = user_name
@@ -24,6 +24,7 @@ module.exports.like = async (req, res) => {
         const userLike = new Like({userId: user_id, imageId: image_id})
         userLike.likeDetails = likeDetails
         await userLike.save()
+        return res.status(200).send({status: true, message: 'Liked'})
     } catch(err) {
         return res.status(500).send({
             status: false,
@@ -33,5 +34,21 @@ module.exports.like = async (req, res) => {
 }
 
 module.exports.removeLike = async (req, res) => {
+    const header = req.headers.authorization
+    const token = header.split(" ")
 
+    const decoded = await jwt_decode(token[1]);
+    const user_id = decoded._id
+ 
+    const image_id = req.query.like
+
+    try {
+        await Like.findOneAndDelete({userId: user_id, imageId: image_id})
+        return res.status(200).send({status: true, message: 'Liked'})
+    } catch(err) {
+        return res.status(500).send({
+            status: false,
+            message: 'internal error'
+        })
+    }
 }
