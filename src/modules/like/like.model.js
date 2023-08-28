@@ -1,13 +1,14 @@
 const { Schema, model } = require('mongoose');
 
-const details = Schema({
-    imageName: String,
-    imageDesc: String,
-    imageUrl: String
+const like_details = Schema({
+    likedBy: String,
+    likedImage: String,
+    likedImageDesc: String,
+    likedImageUrl: String
 },{ _id : false })
 
 module.exports.Like = model('Like', Schema({
     userId: Schema.Types.ObjectId,
     imageId: Schema.Types.ObjectId,
-    details: {details},
+    like_details: like_details,
 }, {timestamps: true }) )
