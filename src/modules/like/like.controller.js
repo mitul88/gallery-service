@@ -23,7 +23,7 @@ module.exports.like = async (req, res) => {
         likeDetails.likedImageDesc = image.desc
         likeDetails.likedImageUrl = image.url
 
-        const userLike = new Like({userId: user_id, imageId: image_id})
+        const userLike = new Like({user_id: user_id, image_id: image_id})
         userLike.likeDetails = likeDetails
         await userLike.save()
         return res.status(200).send({status: true, message: 'Liked'})
@@ -46,8 +46,8 @@ module.exports.removeLike = async (req, res) => {
     if (!image_id) return res.status(400).send({status: false, message: '"image" is missing in search parameter'})
 
     try {
-        await Like.findOneAndDelete({userId: user_id, imageId: image_id})
-        return res.status(200).send({status: true, message: 'Liked'})
+        await Like.findOneAndDelete({user_id: user_id, image_id: image_id})
+        return res.status(200).send({status: true, message: 'Unliked'})
     } catch(err) {
         return res.status(500).send({
             status: false,

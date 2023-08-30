@@ -44,9 +44,9 @@ module.exports.viewImage = async (req, res) => {
     const id = req.params.id
     try{
         const image = await Image.findById(id)
-        const imageLikes = await Like.count({imageId: id})
-        const commentsCount = await Comment.count({imageId: id})
-        const allComments = await Comment.find({imageId: id})
+        const imageLikes = await Like.count({image_id: id})
+        const commentsCount = await Comment.count({image_id: id})
+        const allComments = await Comment.find({image_id: id})
 
         return res.status(200).send({
             status: true,

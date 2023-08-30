@@ -8,7 +8,7 @@ const like_details = Schema({
 },{ _id : false })
 
 module.exports.Like = model('Like', Schema({
-    userId: Schema.Types.ObjectId,
-    imageId: Schema.Types.ObjectId,
+    user_id: Schema.Types.ObjectId,
+    image_id: Schema.Types.ObjectId,
     like_details: like_details,
 }, {timestamps: true }) )
