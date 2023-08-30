@@ -1,6 +1,8 @@
 const _ = require('lodash')
 const jwt_decode = require('jwt-decode')
 const { User } = require("../user/user.model")
+const { Like } = require("../like/like.model")
+const { Comment } = require("../comment/comment.model")
 const {Image} = require('./image.model')
 const { uploader } = require('cloudinary').v2
 const { dataUri } = require('../../upload/multerUpload')
@@ -42,10 +44,19 @@ module.exports.viewImage = async (req, res) => {
     const id = req.params.id
     try{
         const image = await Image.findById(id)
+        const imageLikes = await Like.count({imageId: id})
+        const commentsCount = await Comment.count({imageId: id})
+        const allComments = await Comment.find({imageId: id})
+
         return res.status(200).send({
             status: true,
             message: "Image fetched",
-            data: image
+            data: {
+                likes: imageLikes,
+                comments: commentsCount,
+                allComments,
+                image
+            }
         })
     }catch(err) {
         console.log(err)
