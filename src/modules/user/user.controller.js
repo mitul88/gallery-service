@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const jwt_decode = require('jwt-decode')
 const { User } = require("./user.model")
-const { Profile } = require('../profile/profile.model')
+const { Profile } = require('./profile.model')
 
 module.exports.getUser = async (req, res) => {
     try {
@@ -13,12 +13,12 @@ module.exports.getUser = async (req, res) => {
 
         let user = await User.findOne({_id: id})
         let profile = await Profile.findOne({userId: id})
-        let userProfile = Object.assign(user, profile)
+        let userProfile = Object.assign(user, _.pick(profile, ["phone", "dob", "profession", "bio", "skills"]))
         if (user) {
             return res.status(200).send({
                 status: true,
                 message: "User profile",
-                data: _.pick(userProfile, ["name", "email", "phone", "dob", "profession", "bio", "skills"])
+                data: _.pick(userProfile, ["_id", "name", "email", "phone", "dob", "profession", "bio", "skills", "createdAt"]),
             })
         } else {
             return res.status(200).send({
@@ -37,16 +37,40 @@ module.exports.updateUser = async (req, res) => {
         let token = header.split(" ")
         let decoded = await jwt_decode(token[1]);
         let id = decoded._id
-        const {name, email, phone} = req.body
+        const {
+            name, 
+            phone,
+            dob,
+            profession,
+            bio,
+            skills
+        } = req.body
 
         let user = await User.findById( id );
-
+        
         if (user) {
             user.name = name
-            user.email = email
-            user.phone = phone
             await user.save()
         }
+
+        let profile = await Profile.findOne({userId: id})
+
+        if (!profile) {
+            let createdProfile = new Profile({userId: id});
+            createdProfile.phone = phone
+            createdProfile.dob = dob
+            createdProfile.profession = profession
+            createdProfile.bio = bio
+            createdProfile.skills = skills
+            createdProfile.save()
+        } else {
+            profile.phone = phone
+            profile.dob = dob
+            profile.profession = profession
+            profile.bio = bio
+            profile.skills = skills
+        }
+
 
         return res.status(200).send({
             status: true,

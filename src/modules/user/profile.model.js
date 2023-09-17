@@ -14,6 +14,7 @@ const profileSchema = Schema({
     dob: {
         type: Date,
     },
+    profile_photo: String,
     profession: String,
     bio: String,
     skills: [String]
