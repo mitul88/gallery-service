@@ -5,11 +5,7 @@ const { Profile } = require('./profile.model')
 
 module.exports.getUser = async (req, res) => {
     try {
-        let header = req.headers.authorization
-        let token = header.split(" ")
-
-        let decoded = await jwt_decode(token[1]);
-        let id = decoded._id
+        let id = req.params.id
 
         let user = await User.findOne({_id: id})
         let profile = await Profile.findOne({userId: id})

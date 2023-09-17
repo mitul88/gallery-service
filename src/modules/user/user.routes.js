@@ -2,7 +2,7 @@ const router = require('express').Router();
 const {getUser, updateUser, deactivate, changePassword} = require('./user.controller')
 
 
-router.route('/details')
+router.route('/:id')
     .get(getUser);
 
 router.route('/change-password')
