@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const jwt_decode = require('jwt-decode')
 const { User } = require("./user.model")
+const { Profile } = require('../profile/profile.model')
 
 module.exports.getUser = async (req, res) => {
     try {
@@ -11,11 +12,13 @@ module.exports.getUser = async (req, res) => {
         let id = decoded._id
 
         let user = await User.findOne({_id: id})
+        let profile = await Profile.findOne({userId: id})
+        let userProfile = Object.assign(user, profile)
         if (user) {
             return res.status(200).send({
                 status: true,
                 message: "User profile",
-                data: _.pick(user, ["name", "email", "phone"])
+                data: _.pick(userProfile, ["name", "email", "phone", "dob", "profession", "bio", "skills"])
             })
         } else {
             return res.status(200).send({

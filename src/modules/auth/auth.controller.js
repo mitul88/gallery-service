@@ -26,7 +26,6 @@ module.exports.register = async (req, res) => {
             return res.status(201).send({
                 status: true,
                 message: "User registered",
-                roles: [user.type],
                 token
             })
         } catch (error) {
@@ -68,7 +67,6 @@ module.exports.login = async (req, res) => {
                 return res.status(200).send({
                     status: true,
                     message: "User sign in successfull",
-                    roles: [user.type],
                     token
                 })
             }
