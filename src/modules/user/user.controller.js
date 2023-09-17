@@ -2,14 +2,16 @@ const _ = require('lodash')
 const jwt_decode = require('jwt-decode')
 const { User } = require("./user.model")
 const { Profile } = require('./profile.model')
+const { default: mongoose } = require('mongoose')
 
 module.exports.getUser = async (req, res) => {
     try {
-        let id = req.params.id
-
+        let id = mongoose.Types.ObjectId(req.params.id)
+        
         let user = await User.findOne({_id: id})
         let profile = await Profile.findOne({userId: id})
         let userProfile = Object.assign(user, _.pick(profile, ["phone", "dob", "profession", "bio", "skills"]))
+        
         if (user) {
             return res.status(200).send({
                 status: true,
