@@ -25,7 +25,11 @@ module.exports.Image = model('Image', Schema({
         type: String,
     },
     asset_details: asset_details,
-    uploaded_by:  Schema.Types.ObjectId,
+    uploaded_by:  {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     category: {
         type: Schema.Types.ObjectId,
         ref: 'Category',

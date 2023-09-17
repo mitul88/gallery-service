@@ -21,13 +21,13 @@ module.exports.register = async (req, res) => {
             user.password = await bcrypt.hash(password, salt)
             await user.save()
 
-            const accessToken = user.generateJWT()
+            const token = user.generateJWT()
 
             return res.status(201).send({
                 status: true,
                 message: "User registered",
                 roles: [user.type],
-                accessToken
+                token
             })
         } catch (error) {
             return res.status(400).send({
@@ -64,12 +64,12 @@ module.exports.login = async (req, res) => {
                     message: "Please enter correct password"
                 })
             } else {
-                const accessToken = user.generateJWT()
+                const token = user.generateJWT()
                 return res.status(200).send({
                     status: true,
                     message: "User sign in successfull",
                     roles: [user.type],
-                    accessToken
+                    token
                 })
             }
         }
