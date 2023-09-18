@@ -25,7 +25,10 @@ module.exports.getUser = async (req, res) => {
             })
         }
     } catch (err) {
-        console.log(err.message)
+        return res.status(500).send({
+            status: false,
+            message: err
+        })
     }
 }
 
