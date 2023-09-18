@@ -6,6 +6,7 @@ const { Comment } = require("../comment/comment.model")
 const {Image} = require('./image.model')
 const { uploader } = require('cloudinary').v2
 const { dataUri } = require('../../upload/multerUpload')
+const {PaginationParameters} = require('mongoose-paginate-v2');
 
 module.exports.createImage = async (req, res) => {
     const header = req.headers.authorization
@@ -68,17 +69,42 @@ module.exports.viewImage = async (req, res) => {
 }
 
 module.exports.imageList = async (req, res) => {
+
+    const page = req.query.page? req.query.page : 1
+    const limit = req.query.limit? req.query.limit : 10
+    const category = req.query.category? req.query.category : null
+    const user = req.query.user
+    
+    let args = {}
+    if(category) Object.assign(args, {category})
+    if(user) Object.assign(args, {uploaded_by : user})
+
+    console.log(args)
+    
+    const options = {
+        page: parseInt(page, 10),
+        limit: parseInt(limit, 10),
+        populate: [{
+            path: 'category',
+            select: 'name'
+        }, {
+            path: 'uploaded_by',
+            select: 'name'
+        }]
+    }
+
     try {
-        const images = await Image.find()
+        // const images = await Image.find()
         return res.status(200).send({
             status: true,
             message: "images fetched",
-            data: images
+            data: await Image.paginate(args, options)
         })
     }catch(err) {
         return res.status(500).send({
             status: false,
-            message: "Internal server error"
+            message: "Internal server error",
+            err
         })
     }
 }

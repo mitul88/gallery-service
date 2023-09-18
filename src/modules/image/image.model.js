@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const pagination = require('mongoose-paginate-v2');
 
 const asset_details = Schema({
     asset_id: String,
@@ -13,7 +14,7 @@ const asset_details = Schema({
     secure_url: String,
 },{ _id : false })
 
-module.exports.Image = model('Image', Schema({
+const imageSchema =  Schema({
     title: {
         type: String,
         required: true
@@ -35,4 +36,8 @@ module.exports.Image = model('Image', Schema({
         ref: 'Category',
         required: true
     },
-}, {timestamps: true }) )
+}, {timestamps: true }); 
+
+imageSchema.plugin(pagination);
+
+module.exports.Image = model('Image', imageSchema);

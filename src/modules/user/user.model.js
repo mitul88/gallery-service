@@ -2,7 +2,7 @@ const { Schema, model } = require('mongoose')
 const jwt = require('jsonwebtoken');
 const { ENV_CONFIG } = require('../../config/env.config');
 
-const userSchema = Schema({ 
+const user = Schema({ 
     name: {
         type: String
     },
@@ -28,7 +28,7 @@ const userSchema = Schema({
     }
 }, { timestamps: true });
 
-userSchema.methods.generateJWT = function() {
+user.methods.generateJWT = function() {
     const token = jwt.sign({
         _id: this.id,
         email: this.email,
@@ -40,4 +40,4 @@ userSchema.methods.generateJWT = function() {
     return token
 }
 
-module.exports.User = model('User', userSchema);
+module.exports.User = model('User', user);
