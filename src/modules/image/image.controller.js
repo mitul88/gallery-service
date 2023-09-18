@@ -84,6 +84,7 @@ module.exports.imageList = async (req, res) => {
     const options = {
         page: parseInt(page, 10),
         limit: parseInt(limit, 10),
+        sort: {createdAt: -1},
         populate: [{
             path: 'category',
             select: 'name'
