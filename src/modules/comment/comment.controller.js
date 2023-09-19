@@ -9,8 +9,7 @@ module.exports.comment = async(req, res) => {
     const user_id = decoded._id
     const user_name = decoded.name
     const {user_comment, image_id} = req.body
-    console.log(user_id)
-    console.log(user_name)
+    if (!user_comment ) return res.status(400).send({message: "please fill up comment section"})
     try{
         const comment = new Comment({user_comment, image_id})
         comment.user = {id:user_id, name:user_name}
