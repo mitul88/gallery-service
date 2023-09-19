@@ -74,7 +74,7 @@ module.exports.imageList = async (req, res) => {
     const limit = req.query.limit? req.query.limit : 10
     const category = req.query.category? req.query.category : null
     const user = req.query.user
-    
+    console.log(category)
     let args = {}
     if(category) Object.assign(args, {category})
     if(user) Object.assign(args, {uploaded_by : user})

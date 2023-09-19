@@ -26,6 +26,6 @@ module.exports.getCategories = async (req, res) => {
     return res.status(200).send({
         status: true,
         message: "categories fetched",
-        categories        
+        data: categories        
     })
 }

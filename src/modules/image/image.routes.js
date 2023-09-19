@@ -6,12 +6,12 @@ const {createImage, viewImage, deleteImage, imageList} = require('./image.contro
 
 router.route('/')
     .get(imageList);
+ 
+router.route('/:id')
+    .get(viewImage);
 
 router.route('/upload')
     .post([ContentTypeMiddleware.formData, singleImageUpload], createImage);
-
-router.route('/view-image/:id')
-    .get(viewImage);
 
 router.route('/delete-image/:id')
     .delete(deleteImage);
