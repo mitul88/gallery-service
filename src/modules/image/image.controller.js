@@ -44,7 +44,7 @@ module.exports.createImage = async (req, res) => {
 module.exports.viewImage = async (req, res) => {
     const id = req.params.id
     try{
-        const image = await Image.findById(id)
+        const image = await Image.findById(id).populate('category')
         const imageLikes = await Like.count({image_id: id})
         const commentsCount = await Comment.count({image_id: id})
         const allComments = await Comment.find({image_id: id})
@@ -74,7 +74,6 @@ module.exports.imageList = async (req, res) => {
     const limit = req.query.limit? req.query.limit : 10
     const category = req.query.category? req.query.category : null
     const user = req.query.user
-    console.log(category)
     let args = {}
     if(category) Object.assign(args, {category})
     if(user) Object.assign(args, {uploaded_by : user})
