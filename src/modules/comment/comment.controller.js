@@ -29,9 +29,10 @@ module.exports.comment = async(req, res) => {
 
 module.exports.getComments = async(req, res) => {
     const image_id = mongoose.Types.ObjectId(req.params.id)
-    // if(!image_id) return res.status(400).send({message: "image_id is not provided"})
+    if(!image_id) return res.status(400).send({message: "image_id is not provided"})
     try{
         const comments = await Comment.find({image_id: image_id})
+            .sort({createdAt: -1})
         return res.status(200).send({
             status: true,
             message: "comments fetched",
