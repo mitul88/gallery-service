@@ -28,14 +28,16 @@ module.exports.comment = async(req, res) => {
 
 module.exports.getComments = async(req, res) => {
     const image_id = req.params.image_id
+    // if(!image_id) return res.status(400).send({message: "image_id is not provided"})
     try{
-        const comments = await Image.find({image_id: image_id})
+        const comments = await Comment.find({image_id: image_id})
         return res.status(200).send({
             status: true,
             message: "comments fetched",
             data: comments
         })
     }catch(err) {
+        console.log(err.message)
         return res.status(500).send({
             status: false,
             message: "internal server error"
