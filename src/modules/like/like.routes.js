@@ -1,9 +1,11 @@
 const router = require('express').Router();
-const {like, removeLike} = require('./like.controller')
+const {like, removeLike, likeCounts} = require('./like.controller')
 
 
 router.route('/')
-    .get(like)
+    .post(like)
     .delete(removeLike);
+router.route('/counts/:imageId')
+    .get(likeCounts)
 
 module.exports = router;

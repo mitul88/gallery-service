@@ -77,8 +77,6 @@ module.exports.imageList = async (req, res) => {
     let args = {}
     if(category) Object.assign(args, {category})
     if(user) Object.assign(args, {uploaded_by : user})
-
-    console.log(args)
     
     const options = {
         page: parseInt(page, 10),
