@@ -116,6 +116,7 @@ module.exports.deleteImage = async (req, res) => {
         const image = await Image.findById(id)
         await uploader.destroy(image.asset_details.public_id, {invalidate: true})
         await Image.deleteOne({_id: id})
+        await Comment.deleteMany({image_id: id})
         return res.status(200).send({
             status: true,
             message: "Image deleted"
