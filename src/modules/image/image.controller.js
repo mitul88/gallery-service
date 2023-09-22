@@ -44,7 +44,7 @@ module.exports.createImage = async (req, res) => {
 module.exports.viewImage = async (req, res) => {
     const id = req.params.id
     try{
-        const image = await Image.findById(id).populate('category')
+        const image = await Image.findById(id).populate('category').populate({path: 'uploaded_by', select: 'name'})
         const imageLikes = await Like.count({image_id: id})
         const commentsCount = await Comment.count({image_id: id})
         const allComments = await Comment.find({image_id: id})
