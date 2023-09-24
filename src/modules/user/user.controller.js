@@ -164,6 +164,13 @@ module.exports.delete = async (req, res) => {
 
 module.exports.uploadeProfilePicture = async (req, res) => {
     console.log(req.file)
+    // const header = req.headers.authorization
+    // const token = header.split(" ")
+
+    // const decoded = await jwt_decode(token[1]);
+    // const uploaded_by = decoded._id
+    
+
     return res.status(200).send({
         status: true,
         message: "REQ RECEIVED"

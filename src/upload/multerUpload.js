@@ -7,6 +7,9 @@ const path = require('path')
 const imageStorage = multer.memoryStorage();
 module.exports.singleImageUpload = multer({ imageStorage }).single('image');
 
+// profile photo upload settings
+const profilePhotoStorage = multer.memoryStorage();
+module.exports.singleProfilePhotoUpload = multer({ profilePhotoStorage }).single('profile-photo');
 
 // req contains field object. This func converts the buffer to data url
 const dUri = new DatauriParser();
