@@ -1,9 +1,12 @@
 const router = require('express').Router();
-const {getUser, updateUser, deactivate, changePassword} = require('./user.controller')
+const {getUser, updateUser, deactivate, changePassword, uploadeProfilePicture} = require('./user.controller')
 
 
 router.route('/:id')
     .get(getUser);
+
+router.route('/upload_profile_photo/:id')
+    .post(uploadeProfilePicture);
 
 router.route('/change-password')
     .get(changePassword);

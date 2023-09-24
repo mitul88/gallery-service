@@ -161,3 +161,11 @@ module.exports.delete = async (req, res) => {
         })
     }
 }
+
+module.exports.uploadeProfilePicture = async (req, res) => {
+    console.log(req.file)
+    return res.status(200).send({
+        status: true,
+        message: "REQ RECEIVED"
+    })
+}

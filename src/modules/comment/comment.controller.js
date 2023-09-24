@@ -47,9 +47,14 @@ module.exports.getComments = async(req, res) => {
 }
 
 module.exports.editComment = async(req, res) => {
-    const id = req.params.id 
+    const id = req.body.comment_id;
+    const user_comment = req.body.user_comment; 
     try{
         await Comment.updateOne({_id: id},{$set: {user_comment: user_comment}})
+        return res.status(200).send({
+            status: true,
+            messsage: "Comment updated"
+        })
     }catch(err) {
         return res.status(500).send({
             status: false,
@@ -59,7 +64,7 @@ module.exports.editComment = async(req, res) => {
 }
 
 module.exports.deleteComment = async(req, res) => {
-    const id = req.params.id  
+    const id = req.body.comment_id  
 
     try {
         await Comment.deleteOne({_id: id})
