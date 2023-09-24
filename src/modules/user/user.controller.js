@@ -3,6 +3,8 @@ const jwt_decode = require('jwt-decode')
 const { User } = require("./user.model")
 const { Profile } = require('./profile.model')
 const { default: mongoose } = require('mongoose')
+const { dataUri } = require('../../upload/multerUpload');
+const { uploader } = require('cloudinary').v2
 
 module.exports.getUser = async (req, res) => {
     try {
@@ -63,13 +65,14 @@ module.exports.updateUser = async (req, res) => {
             createdProfile.profession = profession
             createdProfile.bio = bio
             createdProfile.skills = skills
-            createdProfile.save()
+            await createdProfile.save()
         } else {
             profile.phone = phone
             profile.dob = dob
             profile.profession = profession
             profile.bio = bio
             profile.skills = skills
+            await profile.save()
         }
 
 
@@ -164,15 +167,29 @@ module.exports.delete = async (req, res) => {
 
 module.exports.uploadeProfilePicture = async (req, res) => {
     console.log(req.file)
-    // const header = req.headers.authorization
-    // const token = header.split(" ")
+    const header = req.headers.authorization
+    const token = header.split(" ")
 
-    // const decoded = await jwt_decode(token[1]);
-    // const uploaded_by = decoded._id
+    const decoded = await jwt_decode(token[1]);
+    const uploaded_by = decoded._id
     
+        if(req.file) {
+            const file = dataUri(req).content;
+            const result = await uploader.upload(file);
+            let profile = await Profile.findOne({userId: uploaded_by})
+            if(!profile) {
+                let createdProfile = new Profile({userId: uploaded_by});
+                createdProfile.profile_photo = result.url;
+                await createdProfile.save();
+            } else {
+                profile.profile_photo = result.url;
+                await profile.save();
+            }
+        }
+       
 
     return res.status(200).send({
         status: true,
-        message: "REQ RECEIVED"
+        message: "Profile photo uploaded"
     })
 }
