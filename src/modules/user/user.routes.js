@@ -18,7 +18,7 @@ router.route('/deactivate')
 router.route('/update')
     .put(updateUser);
 
-router.route('/single-update')
+router.route('/single-update/:userId')
     .patch(singleUpdate);
 
 

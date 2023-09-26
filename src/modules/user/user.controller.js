@@ -199,13 +199,17 @@ module.exports.singleUpdate = async (req, res) => {
         let token = header.split(" ")
         let decoded = await jwt_decode(token[1]);
         let id = decoded._id
-    try {
         const {
             profession,
             bio,
             interest
         } = req.body
-        
+
+        let userId = req.params.userId;
+
+        if(id !== userId) return res.status(401).send({status: false, message: "You are not authorized!"})
+
+    try {
         let profile = await Profile.findOne({userId: id})
         if (!profile) {
             profile = new Profile({userId: id})
