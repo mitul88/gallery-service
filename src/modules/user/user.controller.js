@@ -193,3 +193,49 @@ module.exports.uploadeProfilePicture = async (req, res) => {
         message: "Profile photo uploaded"
     })
 }
+
+module.exports.singleUpdate = async (req, res) => {
+        let header = req.headers.authorization
+        let token = header.split(" ")
+        let decoded = await jwt_decode(token[1]);
+        let id = decoded._id
+    try {
+        const {
+            profession,
+            bio,
+            interest
+        } = req.body
+        
+        let profile = await Profile.findOne({userId: id})
+        if (!profile) {
+            profile = new Profile({userId: id})
+        }
+
+        if (profession) {
+            if (profession === "") return res.status(400).send({status: false, message: "Please enter your profession"})
+            profile.profession = profession
+        }
+        if (bio) {
+            if (bio === "") return res.status(400).send({status: false, message: "Please enter your bio"})
+            profile.bio = bio
+        }
+        if (interest) {
+            if (interest === "") return res.status(400).send({status: false, message: "Please enter your interest"})
+            profile.interest = interest
+        }
+
+        await profile.save();
+
+        return res.status(200).send({
+            status: true,
+            message: `entry updated successfully !`,
+        })
+
+    } catch(err) {
+        console.log(err.message)
+        return res.status(200).send({
+            status: true,
+            message: err.message,
+        })
+    }
+}

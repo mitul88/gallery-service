@@ -17,6 +17,7 @@ const profileSchema = Schema({
     profile_photo: String,
     profession: String,
     bio: String,
+    interest: [String],
     skills: [String]
 }, { timestamps: true });
 
