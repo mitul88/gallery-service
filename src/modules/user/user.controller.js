@@ -12,13 +12,13 @@ module.exports.getUser = async (req, res) => {
         
         let user = await User.findOne({_id: id})
         let profile = await Profile.findOne({userId: id})
-        let userProfile = Object.assign(user, _.pick(profile, ["phone", "dob", "profession", "bio", "skills", "profile_photo",]))
+        let userProfile = Object.assign(user, _.pick(profile, ["phone", "dob", "profession", "bio", "interest", "profile_photo",]))
         
         if (user) {
             return res.status(200).send({
                 status: true,
                 message: "User profile",
-                data: _.pick(userProfile, ["_id", "profile_photo", "name", "email", "phone", "dob", "profession", "bio", "skills", "createdAt"]),
+                data: _.pick(userProfile, ["_id", "profile_photo", "name", "email", "phone", "dob", "profession", "bio", "interest", "createdAt"]),
             })
         } else {
             return res.status(200).send({
@@ -223,12 +223,13 @@ module.exports.singleUpdate = async (req, res) => {
             if (bio === "") return res.status(400).send({status: false, message: "Please enter your bio"})
             profile.bio = bio
         }
-        if (interest) {
-            if (interest === "") return res.status(400).send({status: false, message: "Please enter your interest"})
-            profile.interest = interest
-        }
 
         await profile.save();
+
+        if (interest) {
+            if (interest === "") return res.status(400).send({status: false, message: "Please enter your interest"})
+            await Profile.updateOne({userId: userId}, {$push:{interest: interest}})
+        }
 
         return res.status(200).send({
             status: true,
