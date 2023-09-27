@@ -35,8 +35,7 @@ module.exports.getUser = async (req, res) => {
 }
 
 module.exports.updateUser = async (req, res) => {
-    try {
-        let header = req.headers.authorization
+    let header = req.headers.authorization
         let token = header.split(" ")
         let decoded = await jwt_decode(token[1]);
         let id = decoded._id
@@ -46,10 +45,14 @@ module.exports.updateUser = async (req, res) => {
             dob,
             profession,
             bio,
-            skills
         } = req.body
+    let userId = req.params.id;
+    if (userId !== id) return res.status(401).send({status: false, message: "You are not authoried!"})
+    if(name === "") return res.status(400).send({status: false, message: "Name cannot be empty"})
+    try {
+        let user = await User.findById( userId );
 
-        let user = await User.findById( id );
+        if (!user) return res.status(400).send({status: false, message: "user not found!"});
         
         if (user) {
             user.name = name
@@ -64,14 +67,12 @@ module.exports.updateUser = async (req, res) => {
             createdProfile.dob = dob
             createdProfile.profession = profession
             createdProfile.bio = bio
-            createdProfile.skills = skills
             await createdProfile.save()
         } else {
             profile.phone = phone
             profile.dob = dob
             profile.profession = profession
             profile.bio = bio
-            profile.skills = skills
             await profile.save()
         }
 

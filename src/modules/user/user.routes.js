@@ -15,7 +15,7 @@ router.route('/change-password')
 router.route('/deactivate')
     .get(deactivate);
 
-router.route('/update')
+router.route('/update/:id')
     .put(updateUser);
 
 router.route('/single-update/:userId')
