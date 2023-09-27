@@ -167,35 +167,6 @@ module.exports.delete = async (req, res) => {
     }
 }
 
-module.exports.uploadeProfilePicture = async (req, res) => {
-    console.log(req.file)
-    const header = req.headers.authorization
-    const token = header.split(" ")
-
-    const decoded = await jwt_decode(token[1]);
-    const uploaded_by = decoded._id
-    
-        if(req.file) {
-            const file = dataUri(req).content;
-            const result = await uploader.upload(file);
-            let profile = await Profile.findOne({userId: uploaded_by})
-            if(!profile) {
-                let createdProfile = new Profile({userId: uploaded_by});
-                createdProfile.profile_photo = result.url;
-                await createdProfile.save();
-            } else {
-                profile.profile_photo = result.url;
-                await profile.save();
-            }
-        }
-       
-
-    return res.status(200).send({
-        status: true,
-        message: "Profile photo uploaded"
-    })
-}
-
 module.exports.singleUpdate = async (req, res) => {
         let header = req.headers.authorization
         let token = header.split(" ")
@@ -245,4 +216,65 @@ module.exports.singleUpdate = async (req, res) => {
             message: err.message,
         })
     }
+}
+
+module.exports.uploadeProfilePicture = async (req, res) => {
+    const header = req.headers.authorization
+    const token = header.split(" ")
+
+    const decoded = await jwt_decode(token[1]);
+    const uploaded_by = decoded._id
+    
+        if(req.file) {
+            const file = dataUri(req).content;
+            const result = await uploader.upload(file);
+            let profile = await Profile.findOne({userId: uploaded_by})
+            if(!profile) {
+                let createdProfile = new Profile({userId: uploaded_by});
+                createdProfile.profile_photo = result.url;
+                createdProfile.asset_details = result
+                await createdProfile.save();
+            } else {
+                profile.profile_photo = result.url;
+                profile.asset_details = result;
+                await profile.save();
+            }
+        }
+       
+
+    return res.status(200).send({
+        status: true,
+        message: "Profile photo uploaded"
+    })
+}
+
+module.exports.deleteProfilePhoto = async (req, res) => {
+    const header = req.headers.authorization
+    const token = header.split(" ")
+
+    const decoded = await jwt_decode(token[1]);
+    const uploaded_by = decoded._id;
+    const authUserId = req.params.userId;
+
+    if(authUserId !== uploaded_by) return res.status(401).send({status: false, message: "You are not authorized!"})
+
+    const profile = await Profile.findOne({userId: uploaded_by});
+
+    if(!profile) return res.status(400).send({status: false, message: "User not found"});
+    if(!profile.profile_photo) return res.status(400).send({status: false, message: "User photo not found"});
+
+    try {
+        await uploader.destroy(profile.asset_details.public_id, {invalidate: true});
+        profile.asset_details = undefined;
+        profile.profile_photo = undefined;
+        await profile.save();
+        return res.status(200).send({status: true, message: "Profile photo deleted!"})
+    } catch(err) {
+        return res.status(500).send({
+            status: false,
+            message: "Internal server error",
+        })
+    }
+
+
 }

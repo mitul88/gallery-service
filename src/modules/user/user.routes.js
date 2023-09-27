@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { ContentTypeMiddleware } = require('../../middleware/contentType.middleware');
 const { singleProfilePhotoUpload } = require('../../upload/multerUpload');
-const {getUser, updateUser, deactivate, changePassword, uploadeProfilePicture, singleUpdate} = require('./user.controller')
+const {getUser, updateUser, deactivate, changePassword, uploadeProfilePicture, singleUpdate, deleteProfilePhoto} = require('./user.controller')
 
 router.route('/:id')
     .get(getUser);
@@ -20,6 +20,9 @@ router.route('/update/:id')
 
 router.route('/single-update/:userId')
     .patch(singleUpdate);
+
+router.route('/profile-photo-delete/:userId')
+    .delete(deleteProfilePhoto);
 
 
 

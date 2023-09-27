@@ -120,7 +120,6 @@ module.exports.deleteImage = async (req, res) => {
             message: "Image deleted"
         })
     }catch(err) {
-        console.log(err)
         return res.status(500).send({
             status: false,
             message: "Internal server error",
