@@ -5,11 +5,16 @@ const { User } = require('../user/user.model')
 
 module.exports.register = async (req, res) => {  
     const {name, email, password} = req.body
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
 
     if(!name || !email || !password) {
         return res.status(400).send({ status: false, message: "Please fill up required information"})
     }
     
+    if(!emailRegex.test(email)) {
+        return res.status(400).send({status: false, message: "enter valid email"})
+    }
+
     const user = await User.findOne({email})
 
     if(user) {

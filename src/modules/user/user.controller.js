@@ -47,6 +47,7 @@ module.exports.updateUser = async (req, res) => {
             bio,
         } = req.body
     let userId = req.params.id;
+    console.log(req.body)
     if (userId !== id) return res.status(401).send({status: false, message: "You are not authoried!"})
     if(name === "") return res.status(400).send({status: false, message: "Name cannot be empty"})
     try {
