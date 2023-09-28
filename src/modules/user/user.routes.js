@@ -9,8 +9,8 @@ router.route('/:id')
 router.route('/upload_profile_photo/:id')
     .post([ContentTypeMiddleware.formData, singleProfilePhotoUpload], uploadeProfilePicture);
 
-router.route('/change-password')
-    .get(changePassword);
+router.route('/change-password/:userId')
+    .post(changePassword);
 
 router.route('/deactivate')
     .get(deactivate);

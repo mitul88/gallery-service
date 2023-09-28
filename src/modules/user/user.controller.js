@@ -1,10 +1,11 @@
-const _ = require('lodash')
-const jwt_decode = require('jwt-decode')
-const { User } = require("./user.model")
-const { Profile } = require('./profile.model')
-const { default: mongoose } = require('mongoose')
+const _ = require('lodash');
+const jwt_decode = require('jwt-decode');
+const { User } = require("./user.model");
+const { Profile } = require('./profile.model');
+const { default: mongoose } = require('mongoose');
 const { dataUri } = require('../../upload/multerUpload');
-const { uploader } = require('cloudinary').v2
+const { uploader } = require('cloudinary').v2;
+const bcrypt = require('bcrypt');
 
 module.exports.getUser = async (req, res) => {
     try {
@@ -122,25 +123,25 @@ module.exports.changePassword = async (req, res) => {
     const decoded = await jwt_decode(token[1]);
     const id = decoded._id
 
-    const {cur_pass, new_pass, con_pass} = req.body
-
+    const {currentPass, newPass, confirmNewPass} = req.body
     const user = await User.findById(id)
-    const validUser = await bcrypt.compare(cur_pass, user.password)
-                if(!validUser) {
-                    return res.status(200).send({
-                        status: false,
-                        message: "Please enter correct password"
-                    })
-                } else {
-                    if (new_pass !== con_pass ) return res.status(400).send({status: false, message: "Confirm password is not matching with new password !!"})
-                    const salt = await bcrypt.genSalt(10);
-                    const password = await bcrypt.hash(con_pass, salt)
-                    await User.findByIdAndUpdate({_id: id}, {password}, {new: true})
-                    return res.status(200).send({
-                        status: true,
-                        message: "Password changed successfully"
-                    })
-                }
+    console.log(req.body)
+    const validUser = await bcrypt.compare(currentPass, user.password)
+        if(!validUser) {
+            return res.status(401).send({
+                status: false,
+                message: "Current password is incorrect"
+            })
+        } else {
+            if (newPass !== confirmNewPass ) return res.status(400).send({status: false, message: "Confirm password is not matching with new password !!"})
+            const salt = await bcrypt.genSalt(10);
+            const password = await bcrypt.hash(confirmNewPass, salt)
+            await User.findByIdAndUpdate({_id: id}, {password}, {new: true})
+            return res.status(200).send({
+                status: true,
+                message: "Password changed successfully"
+            })
+        }
 }
 
 module.exports.delete = async (req, res) => {
