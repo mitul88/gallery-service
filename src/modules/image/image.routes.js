@@ -13,7 +13,7 @@ router.route('/:id')
 router.route('/upload')
     .post([ContentTypeMiddleware.formData, singleImageUpload], createImage);
 
-router.route('/delete-image/:id')
+router.route('/delete-image/:imageId')
     .delete(deleteImage);
 
 

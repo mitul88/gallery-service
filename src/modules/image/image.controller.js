@@ -7,6 +7,7 @@ const {Image} = require('./image.model')
 const { uploader } = require('cloudinary').v2
 const { dataUri } = require('../../upload/multerUpload')
 const {PaginationParameters} = require('mongoose-paginate-v2');
+const { default: mongoose } = require('mongoose')
 
 module.exports.createImage = async (req, res) => {
     const header = req.headers.authorization
@@ -108,13 +109,23 @@ module.exports.imageList = async (req, res) => {
 }
 
 module.exports.deleteImage = async (req, res) => {
-    const id = req.params.id
+    const header = req.headers.authorization
+    const token = header.split(" ")
+
+    const decoded = await jwt_decode(token[1]);
+    const userId = mongoose.Types.ObjectId(decoded._id)
+
+    const id = req.params.imageId
 
     try {
         const image = await Image.findById(id)
+        
+        if( String(image.uploaded_by) !== String(userId) ) return res.status(401).send({status: false, message: "You are not authorized!"})
+        
         await uploader.destroy(image.asset_details.public_id, {invalidate: true})
         await Image.deleteOne({_id: id})
         await Comment.deleteMany({image_id: id})
+        await Like.deleteMany({image_id: id})
         return res.status(200).send({
             status: true,
             message: "Image deleted"
