@@ -261,7 +261,7 @@ module.exports.deleteProfilePhoto = async (req, res) => {
 
     const profile = await Profile.findOne({userId: uploaded_by});
 
-    if(!profile) return res.status(400).send({status: false, message: "User not found"});
+    if(!profile) return res.status(400).send({status: false, message: "Profile not created yet"});
     if(!profile.profile_photo) return res.status(400).send({status: false, message: "User photo not found"});
 
     try {
@@ -278,4 +278,41 @@ module.exports.deleteProfilePhoto = async (req, res) => {
     }
 
 
+}
+
+module.exports.changeProfilePhoto = async (req, res) => {
+    const header = req.headers.authorization
+    const token = header.split(" ")
+
+    const decoded = await jwt_decode(token[1]);
+    const uploaded_by = decoded._id;
+    const authUserId = req.params.userId;
+
+    if(authUserId !== uploaded_by) return res.status(401).send({status: false, message: "You are not authorized!"})
+
+    try {
+        const profile = await Profile.findOne({userId: uploaded_by});
+        if(!profile) return res.status(422).send({status: false, message: "Profile not created yet, Upload a profile photo first."});
+        
+        if (profile.user_photo === null) return res.status(422).send({status: false, message: "Your current photo dose not exist."});
+    
+        if(req.file) {
+            await uploader.destroy(profile.asset_details.public_id, {invalidate: true});
+            const file = dataUri(req).content;
+            const result = await uploader.upload(file);
+            profile.profile_photo = result.url;
+            profile.asset_details = result;
+            await profile.save();
+
+            return res.status(200).send({status: true, message: "Profile photo updated"})
+        } else {
+            return res.status(400).send({status: "400", message: "Please select image to upload"})
+        }
+    
+    } catch(err) {
+        return res.status(500).send({
+            status: false,
+            message: "Internal server error",
+        })
+    }
 }
