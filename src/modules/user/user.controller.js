@@ -303,12 +303,11 @@ module.exports.changeProfilePhoto = async (req, res) => {
             profile.profile_photo = result.url;
             profile.asset_details = result;
             await profile.save();
-
-            return res.status(200).send({status: true, message: "Profile photo updated"})
         } else {
             return res.status(400).send({status: "400", message: "Please select image to upload"})
         }
-    
+        
+        return res.status(200).send({status: true, message: "Profile photo updated"})
     } catch(err) {
         return res.status(500).send({
             status: false,
