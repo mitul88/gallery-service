@@ -13,7 +13,7 @@ module.exports.comment = async(req, res) => {
     if (!user_comment ) return res.status(400).send({message: "please fill up comment section"})
     try{
         const comment = new Comment({user_comment, image_id})
-        comment.user = {id:user_id, name:user_name}
+        comment.commented_by = user_id;
         await comment.save()
         return res.status(201).send({
             status: true,
@@ -31,7 +31,7 @@ module.exports.getComments = async(req, res) => {
     const image_id = mongoose.Types.ObjectId(req.params.id)
     if(!image_id) return res.status(400).send({message: "image_id is not provided"})
     try{
-        const comments = await Comment.find({image_id: image_id})
+        const comments = await Comment.find({image_id: image_id}).populate({path: 'commented_by', select: 'name'})
             .sort({createdAt: -1})
         return res.status(200).send({
             status: true,

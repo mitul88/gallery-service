@@ -11,5 +11,9 @@ module.exports.Comment = model('Comment', Schema({
         type: String,
         required: true
     },
-    user: user
+    user: user,
+    commented_by: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
 }, {timestamps: true }) )
