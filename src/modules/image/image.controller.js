@@ -5,8 +5,7 @@ const { Like } = require("../like/like.model")
 const { Comment } = require("../comment/comment.model")
 const {Image} = require('./image.model')
 const { uploader } = require('cloudinary').v2
-const { dataUri } = require('../../upload/multerUpload')
-const {PaginationParameters} = require('mongoose-paginate-v2');
+const { dataUri } = require('../../upload/multerUpload');
 const { default: mongoose } = require('mongoose')
 
 module.exports.createImage = async (req, res) => {
@@ -92,12 +91,46 @@ module.exports.imageList = async (req, res) => {
         }]
     }
 
+    const agg = [
+        {
+          '$lookup': {
+            'from': 'likes',
+            'localField': '_id',
+            'foreignField': 'image_id',
+            'as': 'likes'
+          }
+        },{
+            '$lookup': {
+              'from': 'comments',
+              'localField': '_id',
+              'foreignField': 'image_id',
+              'as': 'comments'
+            }, 
+        },{
+            '$lookup': {
+              'from': 'users',
+              'localField': 'uploaded_by',
+              'foreignField': '_id',
+              'as': 'posted_by'
+            }
+        }, {
+            '$addFields' : {
+                'likesCount': {'$size': '$likes'},
+                'commentsCount': {'$size': '$comments'}
+            }
+        }
+    ]
+
+    // populate user will not work with "Mongoose aggregate paginate"
+    const aggregate = Image.aggregate(agg);
+    const data = await Image.aggregatePaginate(aggregate, options);
+
     try {
-        // const images = await Image.find()
         return res.status(200).send({
             status: true,
             message: "images fetched",
-            data: await Image.paginate(args, options)
+            // data: await Image.paginate(args, options)
+            data
         })
     }catch(err) {
         return res.status(500).send({

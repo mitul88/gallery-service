@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
 const pagination = require('mongoose-paginate-v2');
+const aggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
 const asset_details = Schema({
     asset_id: String,
@@ -39,5 +40,6 @@ const imageSchema =  Schema({
 }, {timestamps: true }); 
 
 imageSchema.plugin(pagination);
+imageSchema.plugin(aggregatePaginate);
 
 module.exports.Image = model('Image', imageSchema);
