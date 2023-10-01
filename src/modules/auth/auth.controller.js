@@ -48,7 +48,7 @@ module.exports.login = async (req, res) => {
     const url = req.originalUrl
 
     if(!email || !password) {
-         return res.status(400).send({
+         return res.status(422).send({
              status: false,
              message: "Please fill up required information"
          })
@@ -63,7 +63,7 @@ module.exports.login = async (req, res) => {
         } else {        
             const validUser = await bcrypt.compare(req.body.password, user.password)
             if(!validUser) {
-                return res.status(400).send({
+                return res.status(401).send({
                     status: false,
                     message: "Please enter correct password"
                 })
