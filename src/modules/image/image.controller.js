@@ -170,3 +170,41 @@ module.exports.deleteImage = async (req, res) => {
         })
     }
 }
+
+module.exports.userSpecificPhotos = async (req, res) => {
+
+    const page = req.query.page? req.query.page : 1
+    const limit = req.query.limit? req.query.limit : 10
+    const category = req.query.category? req.query.category : null
+    const user = req.query.user
+    let args = {}
+    if(category) Object.assign(args, {category})
+    if(user) Object.assign(args, {uploaded_by : user})
+    
+    const options = {
+        page: parseInt(page, 10),
+        limit: parseInt(limit, 10),
+        sort: {createdAt: -1},
+        populate: [{
+            path: 'category',
+            select: 'name'
+        }, {
+            path: 'uploaded_by',
+            select: 'name'
+        }]
+    }
+
+    try {
+        return res.status(200).send({
+            status: true,
+            message: "images fetched",
+            data: await Image.paginate(args, options)
+        })
+    }catch(err) {
+        return res.status(500).send({
+            status: false,
+            message: "Internal server error",
+            err
+        })
+    }
+}
