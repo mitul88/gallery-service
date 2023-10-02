@@ -23,6 +23,8 @@ module.exports.createImage = async (req, res) => {
             const result = await uploader.upload(file);
             image.url = result.url;
             image.asset_details = result
+        } else {
+            return res.status(422).send({status: false, message: "Image not provided"})
         }
         await image.save()
         return res.status(200).send({
@@ -30,6 +32,37 @@ module.exports.createImage = async (req, res) => {
             message: "Image created",
             data: _.pick(image, ["title", "category", "url", "created_at"])
         })
+    } catch (err) {
+        console.log(err)
+        return res.status(500).send({
+            status: false,
+            message: "Internal server error"
+        })
+    }
+
+
+}
+
+module.exports.editPhotoInfo = async (req, res) => {
+    const header = req.headers.authorization
+    const token = header.split(" ")
+
+    const decoded = await jwt_decode(token[1]);
+    const authUserId = decoded._id
+    const imageId = req.params.imageId
+    const {title, category, desc} = req.body
+    
+    try {
+        const image = await Image.findById(imageId);
+        if(image.uploaded_by !== authUserId) {
+            return res.status(401).send({status: false , message: "Your are not authorized"})
+        }
+        image.title = title
+        image.desc = desc
+        image.category = category
+        await image.save()
+        
+        return res.status(200).send({status: true, message: "Image information updated"})
     } catch (err) {
         console.log(err)
         return res.status(500).send({
@@ -74,9 +107,10 @@ module.exports.imageList = async (req, res) => {
     const limit = req.query.limit? req.query.limit : 10
     const category = req.query.category? req.query.category : null
     const user = req.query.user
-    let args = {}
-    if(category) Object.assign(args, {category})
-    if(user) Object.assign(args, {uploaded_by : user})
+    
+    // let args = {}
+    // if(category) Object.assign(args, {category})
+    // if(user) Object.assign(args, {uploaded_by : user})
     
     const options = {
         page: parseInt(page, 10),
@@ -121,6 +155,21 @@ module.exports.imageList = async (req, res) => {
         }
     ]
 
+    if (category) {
+        agg.push({
+            '$match' : {
+                'category': mongoose.Types.ObjectId(category)
+            }
+        })
+    }
+
+    if (user) {
+        agg.push({
+            '$match' : {
+                'uploaded_by': mongoose.Types.ObjectId(user)
+            }
+        })  
+    }
     // populate user will not work with "Mongoose aggregate paginate"
     const aggregate = Image.aggregate(agg);
     const data = await Image.aggregatePaginate(aggregate, options);

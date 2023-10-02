@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { ContentTypeMiddleware } = require('../../middleware/contentType.middleware');
 const { singleImageUpload } = require('../../upload/multerUpload');
-const {createImage, viewImage, deleteImage, imageList, userSpecificPhotos} = require('./image.controller')
+const {createImage, viewImage, deleteImage, imageList, userSpecificPhotos, editPhotoInfo} = require('./image.controller')
 
 
 router.route('/')
@@ -11,7 +11,8 @@ router.route('/user-photos')
     .get(userSpecificPhotos);
 
 router.route('/:id')
-    .get(viewImage);
+    .get(viewImage)
+    .put(editPhotoInfo)
 
 router.route('/upload')
     .post([ContentTypeMiddleware.formData, singleImageUpload], createImage);
