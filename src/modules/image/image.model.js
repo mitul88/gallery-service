@@ -26,6 +26,9 @@ const imageSchema =  Schema({
     url: {
         type: String,
     },
+    slug: {
+        type: String,
+    },
     asset_details: asset_details,
     uploaded_by:  {
         type: Schema.Types.ObjectId,

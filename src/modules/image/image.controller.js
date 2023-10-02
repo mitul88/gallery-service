@@ -18,6 +18,9 @@ module.exports.createImage = async (req, res) => {
     
     try {
         const image = new Image({title, desc, category, uploaded_by})
+        const slug_end = mongoose.Types.ObjectId(image._id).toString().slice(-5)
+        image.slug = title.toLowerCase().replace(/\s/g, "-") + "-" + slug_end;
+        console.log(image._id)
         if(req.file) {
             const file = dataUri(req).content;
             const result = await uploader.upload(file);
