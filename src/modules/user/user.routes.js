@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { ContentTypeMiddleware } = require('../../middleware/contentType.middleware');
+const { auth } = require('../../middleware/auth.middleware');
 const { singleProfilePhotoUpload } = require('../../upload/multerUpload');
 const {getUser, updateUser, deactivate, changePassword, uploadeProfilePicture, singleUpdate, deleteProfilePhoto, changeProfilePhoto} = require('./user.controller')
 
@@ -7,25 +8,25 @@ router.route('/:id')
     .get(getUser);
 
 router.route('/upload-profile-photo/:id')
-    .post([ContentTypeMiddleware.formData, singleProfilePhotoUpload], uploadeProfilePicture);
+    .post([auth.authCheck, ContentTypeMiddleware.formData, singleProfilePhotoUpload], uploadeProfilePicture);
 
 router.route('/change-password/:userId')
-    .post(changePassword);
+    .post([auth.authCheck], changePassword);
 
 router.route('/deactivate')
-    .get(deactivate);
+    .get([auth.authCheck], deactivate);
 
 router.route('/update/:id')
-    .put(updateUser);
+    .put([auth.authCheck], updateUser);
 
 router.route('/single-update/:userId')
-    .patch(singleUpdate);
+    .patch([auth.authCheck], singleUpdate);
 
 router.route('/profile-photo-delete/:userId')
-    .delete(deleteProfilePhoto);
+    .delete([auth.authCheck], deleteProfilePhoto);
 
 router.route('/change-profile-photo/:userId')
-    .put([ContentTypeMiddleware.formData, singleProfilePhotoUpload], changeProfilePhoto);
+    .put([auth.authCheck, ContentTypeMiddleware.formData, singleProfilePhotoUpload], changeProfilePhoto);
 
 
 
