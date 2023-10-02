@@ -49,12 +49,14 @@ module.exports.editPhotoInfo = async (req, res) => {
 
     const decoded = await jwt_decode(token[1]);
     const authUserId = decoded._id
-    const imageId = req.params.imageId
+    const imageId = req.params.id
     const {title, category, desc} = req.body
     
     try {
         const image = await Image.findById(imageId);
-        if(image.uploaded_by !== authUserId) {
+        // convert object id to string
+        const uploaded_by = mongoose.Types.ObjectId(image.uploaded_by).toString()
+        if( uploaded_by !== authUserId ) {
             return res.status(401).send({status: false , message: "Your are not authorized"})
         }
         image.title = title
