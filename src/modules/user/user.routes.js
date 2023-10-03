@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { ContentTypeMiddleware } = require('../../middleware/contentType.middleware');
 const { auth } = require('../../middleware/auth.middleware');
 const { singleProfilePhotoUpload } = require('../../upload/multerUpload');
-const {getUser, updateUser, deactivate, changePassword, uploadeProfilePicture, singleUpdate, deleteProfilePhoto, changeProfilePhoto, changeBio, deleteBio} = require('./user.controller')
+const {getUser, updateUser, deactivate, changePassword, uploadeProfilePicture, singleUpdate, deleteProfilePhoto, changeProfilePhoto, changeBio, deleteBio, deleteInterest} = require('./user.controller')
 
 router.route('/:id')
     .get(getUser);
@@ -31,6 +31,9 @@ router.route('/change-profile-photo/:userId')
 
 router.route('/delete-bio/:userId')
     .delete([auth.authCheck], deleteBio);
+
+router.route('/delete-interest/:userId/:interest')
+    .delete([auth.authCheck], deleteInterest);
 
 
 

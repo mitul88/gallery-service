@@ -336,3 +336,25 @@ module.exports.deleteBio = async (req, res) => {
         return res.sstatus(500).send({status: false, message: "Internal server error"})
     }
 }
+
+module.exports.deleteInterest = async (req, res) => {
+    const header = req.headers.authorization
+    const token = header.split(" ")
+
+    const decoded = await jwt_decode(token[1]);
+    const authUserId = decoded._id;
+    const userId = req.params.userId;
+
+    const interest = req.params.interest;
+
+    if(authUserId !== userId) return res.status(401).send({status: false, message: "You are not authorized!"}) 
+    console.log(interest)
+
+    try {
+        if (interest === "") return res.status(400).send({status: false, message: "Please enter your interest"})
+        await Profile.updateOne({userId: userId}, {$pull:{interest: interest}})
+        return res.status(200).send({status: true, message: "interest deleted"})
+    } catch( error) {
+        return res.sstatus(500).send({status: false, message: "Internal server error"})
+    }
+}
