@@ -315,3 +315,24 @@ module.exports.changeProfilePhoto = async (req, res) => {
         })
     }
 }
+
+module.exports.deleteBio = async (req, res) => {
+    const header = req.headers.authorization
+    const token = header.split(" ")
+
+    const decoded = await jwt_decode(token[1]);
+    const authUserId = decoded._id;
+    const userId = req.params.userId;
+
+    if(authUserId !== userId) return res.status(401).send({status: false, message: "You are not authorized!"}) 
+
+    try {
+        const profile = await Profile.findOne({userId: userId});
+        profile.bio = undefined;
+        await profile.save();
+
+        return res.status(200).send({status: true, message: "Bio deleted"})
+    } catch( error) {
+        return res.sstatus(500).send({status: false, message: "Internal server error"})
+    }
+}
