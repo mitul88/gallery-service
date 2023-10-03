@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { ENV_CONFIG } = require('../config/env.config');
 
 
 module.exports.auth = {
@@ -7,7 +8,7 @@ module.exports.auth = {
         if(!token) return res.status(401).send("Access denied, No token provided");
 
         else token = token.split(" ")[1].trim();
-        const decoded = await jwt.verify(token, process.env.JWT_SECRET_KEY);
+        const decoded = await jwt.verify(token, ENV_CONFIG.jwt_encryption_key);
 
         if(!decoded) return res.status(400).send("Invalid token !!");
 
